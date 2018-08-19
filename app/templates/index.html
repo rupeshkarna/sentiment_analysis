@@ -103,20 +103,26 @@
         $.post('/sentiment', postData)
             .done(function(res) {
                 $('#spinner').hide();
-                $('#container4').show();
                 var data = $.parseJSON(res);
-                var columnChart = new ColumnChart(data.rows);
-                columnChart.plot('#container1');
 
-                var pieChart = new PieChart(data.rows);
-                pieChart.plot('#container2');
+                if (data.success === false) {
+                    alert(data.error);
+                } else {
+                    $('#container4').show();
 
-                var wordCloud = new WordCloud(data.rows);
-                wordCloud.plot('#container3');
+                    var columnChart = new ColumnChart(data.rows);
+                    columnChart.plot('#container1');
 
-                var tweetsTable = new TweetsTable(data.rows);
-                $("#tweets-table tr").remove();
-                tweetsTable.plot('#tweets-table');
+                    var pieChart = new PieChart(data.rows);
+                    pieChart.plot('#container2');
+
+                    var wordCloud = new WordCloud(data.rows);
+                    wordCloud.plot('#container3');
+
+                    var tweetsTable = new TweetsTable(data.rows);
+                    $("#tweets-table tr").remove();
+                    tweetsTable.plot('#tweets-table');
+                }
             });
     }
     </script>
