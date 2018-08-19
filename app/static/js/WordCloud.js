@@ -12,7 +12,7 @@ var WordCloud = (function() {
         var wordFrequency = {};
         this.tweets.forEach(function(row) {
             var tweet = row.tweet;
-            var words = tweet.split(" ").filter(w => w.length > 6);
+            var words = tweet.split(" ").filter(w => /^([a-zA-Z]){6,}$/.test(w));
             words.forEach(function(word) {
                 if (!wordFrequency.hasOwnProperty(word)) {
                     wordFrequency[word] = {};
@@ -47,11 +47,7 @@ var WordCloud = (function() {
         var series = [{
             type: 'wordcloud',
             data: data,
-            name: 'Occurrences',
-            rotation: {
-                from: 0,
-                to: 0
-            }
+            name: 'Occurrences'
         }];
 
         this.json.title = title;

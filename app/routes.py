@@ -1,7 +1,9 @@
 from app import app
 from flask import request, render_template
+from tweet_classifier import TweetClassifier
 import json
 
+tweet_handler = TweetClassifier()
 
 @app.route("/")
 def index():
@@ -10,37 +12,9 @@ def index():
 
 @app.route("/sentiment", methods=['POST'])
 def get_twitter_feed():
-    # print request.form['searchkey']
-    data = [
-        {
-            "date": "02 Aug 2018",
-            "user": "Ram",
-            "tweet": "Its a wonderful weather we are having :-D #sunny_days",
-            "sentiment": 1
-        },
-        {
-            "date": "02 Aug 2018",
-            "user": "Ram",
-            "tweet": "Its a unpleasent weather",
-            "sentiment": 0
-        },
-        {
-            "date": "03 Aug 2018",
-            "user": "Ram",
-            "tweet": "This weather is so annoying #rainy_days",
-            "sentiment": 0
-        },
-        {
-            "date": "03 Aug 2018",
-            "user": "Shyam",
-            "tweet": "Just go to hell :-@",
-            "sentiment": 0
-        },
-        {
-            "date": "04 Aug 2018",
-            "user": "Hari",
-            "tweet": "wonderful :-)",
-            "sentiment": 1
-        }
-    ]
-    return json.dumps(dict(success=True, rows=data))
+    if not tweet_handler.authenticate():
+        return json.dumps(dict(success=False, error='Authentication failure!!!'))
+    searchkey = request.form['searchkey']
+    tweets = TweetClassifier.search_tweets(searchkey)
+    TweetClassifier.classify_tweets(tweets)
+    return json.dumps(dict(success=True, rows=tweets))

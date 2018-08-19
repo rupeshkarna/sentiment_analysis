@@ -48,6 +48,7 @@
             <div class="navbar-form form-group">
                 <input id='searchkey' type="text" class="form-control" placeholder="Search">
                 <button id='search' type="submit" class="btn btn-default">Submit</button>
+                <img id='spinner' src="../static/images/ajax-loader.gif" alt="Loading..." />
             </div>
             <!-- /.navbar-collapse -->
         </div>
@@ -85,34 +86,39 @@
         </div>
     </div>
     <script type="text/javascript">
-        $(document).ready(function() {
-            requestAndPlot();
-        })
+    $(document).ready(function() {
+        $('#spinner').hide();
+        $('#container4').hide();
+        requestAndPlot();
+    })
 
-        $('#search').click(function() {
-            requestAndPlot();
-        })
+    $('#search').click(function() {
+        requestAndPlot();
+    })
 
-        function requestAndPlot() {
-            var searchkey = $('#searchkey').val() || "hello";
-            var postData = { 'searchkey': searchkey };
-            $.post('/sentiment', postData)
-                .done(function(res) {
-                    var data = $.parseJSON(res);
-                    var columnChart = new ColumnChart(data.rows);
-                    columnChart.plot('#container1');
+    function requestAndPlot() {
+        var searchkey = $('#searchkey').val() || "hello";
+        var postData = { 'searchkey': searchkey };
+        $('#spinner').show();
+        $.post('/sentiment', postData)
+            .done(function(res) {
+                $('#spinner').hide();
+                $('#container4').show();
+                var data = $.parseJSON(res);
+                var columnChart = new ColumnChart(data.rows);
+                columnChart.plot('#container1');
 
-                    var pieChart = new PieChart(data.rows);
-                    pieChart.plot('#container2');
+                var pieChart = new PieChart(data.rows);
+                pieChart.plot('#container2');
 
-                    var wordCloud = new WordCloud(data.rows);
-                    wordCloud.plot('#container3');
+                var wordCloud = new WordCloud(data.rows);
+                wordCloud.plot('#container3');
 
-                    var tweetsTable = new TweetsTable(data.rows);
-                    $("#tweets-table tr").remove();
-                    tweetsTable.plot('#tweets-table');
-                });
-        }
+                var tweetsTable = new TweetsTable(data.rows);
+                $("#tweets-table tr").remove();
+                tweetsTable.plot('#tweets-table');
+            });
+    }
     </script>
     <!-- Latest compiled and minified JavaScript -->
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
